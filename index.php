@@ -21,6 +21,10 @@
  * Update URI:        https://raw.githubusercontent.com/placha/wordpress-post-map/main/current.json
  */
 
+// ini_set('display_errors', '1');
+// ini_set('display_startup_errors', '1');
+// error_reporting(E_ALL);
+
 function main()
 {
 }
@@ -28,10 +32,9 @@ function main()
 add_shortcode('post-map', 'postMapShortcode');
 function postMapShortcode($attr): string
 {
-    $plugin_data = get_plugin_data( __FILE__ );
+    $plugin_data = get_plugin_data(__FILE__);
     $result = do_shortcode('[leaflet-map zoom="12" lat="50.06172102288047" lng="19.93735195760001" height="500" width="100%" min_zoom="8" max_zoom="16" zoomcontrol fitbounds !tap]');
-    $result .= do_shortcode('[leaflet-geojson src=' . get_site_url() . '/wp-content/plugins/'.$plugin_data['TextDomain'].'/geojson-render.php]{popup-text}[/leaflet-geojson]');
+    $result .= do_shortcode('[leaflet-geojson src=' . get_site_url() . '/wp-content/plugins/' . $plugin_data['TextDomain'] . '/geojson-render.php]{popup-text}[/leaflet-geojson]');
 
     return $result;
 }
-

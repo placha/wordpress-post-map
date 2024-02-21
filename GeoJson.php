@@ -7,33 +7,43 @@ use WP_Query;
 
 class GeoJson
 {
-    private array $jsonData;
+    private const POST_META_KEY = 'coordinates';
 
-    public function __construct($postType = 'portfolio', $postStatus = 'publish')
+    public function __construct(
+        private $postType = 'portfolio',
+        private $postStatus = 'publish',
+    )
     {
-        $query = new WP_Query([
-            'post_type' => $postType,
-            'post_status' => $postStatus,
-        ]);
-        $this->jsonData = [
-            'type' => 'FeatureCollection',
-            'features' => [],
-        ];
-        foreach ($query->posts as $post) {
-            $permalink = get_post_permalink($post->ID) ?? '';
-            $coordinates = get_post_meta($post->ID, 'coordinates')[0] ?? null;
-            if ($coordinates !== null) {
-                $this->jsonData['features'][] = $this->getPointData($coordinates, $post->post_title ?? '', $permalink);
-            }
-        }
     }
 
     /**
      * @throws JsonException
      */
-    public function render():void{
+    public function render(): void
+    {
         header('Content-Type: text/plain; charset=utf-8');
-        echo json_encode($this->jsonData, JSON_THROW_ON_ERROR);
+        echo json_encode($this->getJsonData(), JSON_THROW_ON_ERROR);
+    }
+
+    public function getJsonData(): array
+    {
+        $query = new WP_Query([
+            'post_type' => $this->postType,
+            'post_status' => $this->postStatus,
+        ]);
+        $jsonData = [
+            'type' => 'FeatureCollection',
+            'features' => [],
+        ];
+        foreach ($query->posts as $post) {
+            $permalink = get_post_permalink($post->ID) ?? '';
+            $coordinates = get_post_meta($post->ID, self::POST_META_KEY)[0] ?? null;
+            if ($coordinates !== null) {
+                $jsonData['features'][] = $this->getPointData($coordinates, $post->post_title ?? '', $permalink);
+            }
+        }
+
+        return $jsonData;
     }
 
     private function getPointData(string $coordinates, string $title, string $permalink): array
