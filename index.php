@@ -1,13 +1,5 @@
 <?php
 /**
- * WordPress Post Map
- *
- * @package           placha/wordpress-post-map
- * @author            Kacper Placha
- * @copyright         2024 Kacper Placha
- * @license           MIT
- *
- * @wordpress-plugin
  * Plugin Name:       WordPress Post Map
  * Plugin URI:        https://github.com/placha/wordpress-post-map
  * Description:       Generates geojson file from portfolio posts (meta: coordinates) and provide shortcode: [post-map]
@@ -29,7 +21,6 @@ function main()
 {
 }
 
-add_shortcode('post-map', 'postMapShortcode');
 function postMapShortcode($attr): string
 {
     $plugin_data = get_plugin_data(__FILE__);
@@ -38,3 +29,4 @@ function postMapShortcode($attr): string
 
     return $result;
 }
+add_shortcode('post-map', 'postMapShortcode');
