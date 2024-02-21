@@ -8,7 +8,7 @@
  * Requires PHP:      8.0
  * Author:            Kacper Placha
  * Author URI:        https://placha.pl/
- * Text Domain:       wordpress-post-map
+ * Text Domain:       wordpress-post-map-main
  * License:           MIT
  * Update URI:        https://raw.githubusercontent.com/placha/wordpress-post-map/main/current.json
  */
