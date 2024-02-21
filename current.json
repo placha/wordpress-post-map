@@ -1,0 +1,6 @@
+{
+	"version": "1.0.1",
+	"slug": "wordpress-post-map",
+	"tested": "6.4.3",
+	"package": "https://github.com/placha/wordpress-post-map/archive/refs/heads/main.zip"
+}
