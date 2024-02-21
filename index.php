@@ -23,9 +23,12 @@ function main()
 
 function postMapShortcode($attr): string
 {
+    $postType = $attr['post_type'] ?? 'portfolio';
+    $categorySlug = $_GET['category_slug'] ?? '';
+
     $plugin_data = get_plugin_data(__FILE__);
     $result = do_shortcode('[leaflet-map zoom="12" lat="50.06172102288047" lng="19.93735195760001" height="500" width="100%" min_zoom="8" max_zoom="16" zoomcontrol fitbounds !tap]');
-    $result .= do_shortcode('[leaflet-geojson src=' . get_site_url() . '/wp-content/plugins/' . $plugin_data['TextDomain'] . '/geojson-render.php]{popup-text}[/leaflet-geojson]');
+    $result .= do_shortcode('[leaflet-geojson src=' . get_site_url() . '/wp-content/plugins/' . $plugin_data['TextDomain'] . '/geojson-render.php?post_type=' . $postType . '&category_slug=' . $categorySlug . ']{popup-text}[/leaflet-geojson]');
 
     return $result;
 }

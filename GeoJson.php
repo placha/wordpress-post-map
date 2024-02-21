@@ -10,8 +10,8 @@ class GeoJson
     private const POST_META_KEY = 'coordinates';
 
     public function __construct(
-        private $postType = 'portfolio',
-        private $postStatus = 'publish',
+        private $postType,
+        private $categorySlug = null,
     )
     {
     }
@@ -27,10 +27,14 @@ class GeoJson
 
     public function getJsonData(): array
     {
-        $query = new WP_Query([
+        $queryArgs = [
             'post_type' => $this->postType,
-            'post_status' => $this->postStatus,
-        ]);
+            'post_status' => 'publish',
+        ];
+        if ($this->categorySlug !== null) {
+            $queryArgs['category_name'] = $this->categorySlug;
+        }
+        $query = new WP_Query($queryArgs);
         $jsonData = [
             'type' => 'FeatureCollection',
             'features' => [],
