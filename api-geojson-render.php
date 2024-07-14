@@ -1,5 +1,11 @@
 <?php
 
+if (($_GET['debug'] ?? false) === 'true') {
+    ini_set('display_errors', '1');
+    ini_set('display_startup_errors', '1');
+    error_reporting(E_ALL);
+}
+
 // WordPress init
 if (!isset($wp_did_header)) {
     $wp_did_header = true;
@@ -27,11 +33,11 @@ function getFilteredQueryParameter(string $name): ?string
 $postType = getFilteredQueryParameter('post_type');
 $categorySlug = getFilteredQueryParameter('category_slug');
 if ($postType === null) {
-    exit;
+    $postType = 'post';
 }
 
-$geoJson = new WordpressPostMap\GeoJson(
+$geoJson = new \WordpressPostMap\GeoJson(
     $postType,
     $categorySlug,
 );
-$geoJson->render();
+echo $geoJson->render();

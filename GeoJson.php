@@ -16,20 +16,29 @@ class GeoJson
     {
     }
 
-    /**
-     * @throws JsonException
-     */
-    public function render(): void
+    public function render(): string
     {
         header('Content-Type: text/plain; charset=utf-8');
-        echo json_encode($this->getJsonData(), JSON_THROW_ON_ERROR);
+
+        try {
+            return json_encode($this->getJsonData(), JSON_THROW_ON_ERROR);
+        } catch (JsonException) {
+            return '{}';
+        }
     }
 
-    public function getJsonData(): array
+    private function getJsonData(): array
     {
         $queryArgs = [
             'post_type' => $this->postType,
             'post_status' => 'publish',
+            'posts_per_page' => -1,
+            'meta_query' => [
+                [
+                    'key' => self::POST_META_KEY,
+                    'compare' => 'EXISTS',
+                ],
+            ],
         ];
         if ($this->categorySlug !== null) {
             $queryArgs['category_name'] = $this->categorySlug;
@@ -42,20 +51,24 @@ class GeoJson
         foreach ($query->posts as $post) {
             $permalink = get_post_permalink($post->ID) ?? '';
             $coordinates = get_post_meta($post->ID, self::POST_META_KEY)[0] ?? null;
+            $postTitle = $post->post_title ?? '';
             if ($coordinates !== null) {
-                $jsonData['features'][] = $this->getPointData($coordinates, $post->post_title ?? '', $permalink);
+                $jsonData['features'][] = $this->getPointData(
+                    $coordinates,
+                    "<a href=\"$permalink\">$postTitle</a>"
+                );
             }
         }
 
         return $jsonData;
     }
 
-    private function getPointData(string $coordinates, string $title, string $permalink): array
+    private function getPointData(string $coordinates, string $popupText): array
     {
         return [
             "type" => "Feature",
             'properties' => [
-                "popup-text" => "<a href=\"$permalink\">$title</a>",
+                "popup-text" => $popupText,
             ],
             "geometry" => [
                 "type" => "Point",
